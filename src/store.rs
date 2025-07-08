@@ -116,4 +116,21 @@ impl Store {
             order.print_payment();
         }
     }
+
+    pub fn search_product(&self, product_name: &str) {
+        for product in &self.products {
+            if product_name.to_string() == product.name {
+                println!("\nFound one product with name: '{}' ", product_name);
+                println!(
+                    "{{ Product ID: {:?}, Name: {}, Price: {:?}, Stock: {:?} }}",
+                    product.id,
+                    product.name,
+                    product.price,
+                    product.stock
+                );
+                return;
+            }
+        }
+        println!("\n404! No product found with name: '{}'", product_name);
+    }
 }

@@ -46,4 +46,7 @@ fn main() {
 
     store.update_payment_status(105, PaymentStatus::Refunded);
     store.list_orders();
+
+    store.search_product("Earpiece");
+    store.search_product("AirPods");
 }
