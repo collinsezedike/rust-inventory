@@ -19,10 +19,10 @@ impl Order {
     }
     pub fn print_status(&self) {
         match self.status {
-            OrderStatus::Pending => println!("Order is pending"),
-            OrderStatus::Shipped => println!("Order has been shipped"),
-            OrderStatus::Delivered => println!("Order has been delivered"),
-            OrderStatus::Cancelled => println!("Order has been cancelled"),
+            OrderStatus::Pending => println!("Status: Pending\n"),
+            OrderStatus::Shipped => println!("Status: Shipped\n"),
+            OrderStatus::Delivered => println!("Status: Delivered\n"),
+            OrderStatus::Cancelled => println!("Status: Cancelled\n"),
         };
     }
 }
