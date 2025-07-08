@@ -21,10 +21,11 @@ fn main() {
     store.list_products();
 
     let orders_to_place = [
-        ("Alice Johnson", 1, 2, "Shipped"),
-        ("Bob Smith", 2, 5, "Cancelled"),
-        ("Charlie Daniels", 3, 1, "Pending"),
-        ("James Carnage", 102, 1, "Pending"),
+        ("Alice Johnson", 1, 2),
+        ("Bob Smith", 2, 5),
+        ("Charlie Daniels", 3, 1),
+        ("James Carnage", 10000, 1),
+        ("John Snow", 2, 1),
     ];
 
     for order in orders_to_place {
@@ -39,4 +40,10 @@ fn main() {
     store.list_orders();
 
     store.list_products();
+
+    store.update_payment_status(101, PaymentStatus::Paid);
+    store.list_orders();
+
+    store.update_payment_status(105, PaymentStatus::Refunded);
+    store.list_orders();
 }

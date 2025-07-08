@@ -25,36 +25,19 @@ impl Store {
                 if order.product_id == product.id {
                     found_product_id = true;
                     if !product.is_in_stock(order.quantity) {
-                        order.update_status(OrderStatus::Cancelled);
+                        order.cancel_order();
                     } else {
                         let _ = product.reduce_stock(order.quantity);
                     }
                     break;
                 }
             }
-            if !found_product_id {
-                order.update_status(OrderStatus::Cancelled);
+
+            if !found_product_id || order.is_paid() {
+                order.cancel_order();
             }
         }
     }
-
-    // AI refactoring
-    // fn auto_cancel_invalid_orders(&mut self) {
-    //     for order in &mut self.orders {
-    //         // Find the index of the product
-    //         if let Some(index) = self.products.iter().position(|p| p.id == order.product_id) {
-    //             let product = &mut self.products[index];
-    //             if !product.is_in_stock(order.quantity) {
-    //                 order.update_status(OrderStatus::Cancelled);
-    //             } else {
-    //                 let _ = product.reduce_stock(order.quantity);
-    //             }
-    //         } else {
-    //             // Product ID is invalid
-    //             order.update_status(OrderStatus::Cancelled);
-    //         }
-    //     }
-    // }
 
     pub fn add_product(&mut self, name: &str, price: f64, stock: u32) {
         let new_product = Product {
@@ -79,6 +62,7 @@ impl Store {
             product_id,
             quantity,
             status: OrderStatus::Pending,
+            payment: PaymentStatus::Unpaid,
         };
         self.orders.push(new_order);
         self.auto_cancel_invalid_orders();
@@ -91,6 +75,16 @@ impl Store {
             if order.id == order_id {
                 order.update_status(new_status);
                 println!("LOG: successfully updated Order {:?} status", order_id);
+                break;
+            }
+        }
+    }
+
+    pub fn update_payment_status(&mut self, order_id: u32, new_payment: PaymentStatus) {
+        for order in &mut self.orders {
+            if order.id == order_id {
+                order.update_payment(new_payment);
+                println!("LOG: successfully updated Order {:?} payment", order_id);
                 break;
             }
         }
@@ -119,6 +113,7 @@ impl Store {
                 order.quantity
             );
             order.print_status();
+            order.print_payment();
         }
     }
 }
