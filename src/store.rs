@@ -17,6 +17,42 @@ impl Store {
         Store { products, orders, next_order_id, next_product_id }
     }
 
+    // // My approach
+    // fn auto_cancel_invalid_orders(&mut self) {
+    //     let mut found_product_id = false;
+    //     for order in &mut self.orders {
+    //         for product in &self.products {
+    //             if order.product_id == product.id {
+    //                 found_product = true;
+    //                 if !product.is_in_stock(order.quantity) {
+    //                     order.status = OrderStatus::Cancelled;
+    //                 }
+    //                 break;
+    //             }
+    //         }
+    //     }
+    //     if !found_product {
+    //         order.status = OrderStatus::Cancelled;
+    //     }
+    // }
+
+    // AI refactoring
+    fn auto_cancel_invalid_orders(&mut self) {
+        for order in &mut self.orders {
+            match self.products.iter().find(|p| p.id == order.product_id) {
+                Some(product) => {
+                    if !product.is_in_stock(order.quantity) {
+                        order.status = OrderStatus::Cancelled;
+                    }
+                }
+                None => {
+                    // Product ID is invalid
+                    order.status = OrderStatus::Cancelled;
+                }
+            }
+        }
+    }
+
     pub fn add_product(&mut self, name: &str, price: f64, stock: u32) {
         let new_product = Product {
             id: self.next_product_id,
@@ -42,6 +78,7 @@ impl Store {
             status: OrderStatus::Pending,
         };
         self.orders.push(new_order);
+        self.auto_cancel_invalid_orders();
         println!("LOG: successfully placed Order {:?} to the store", self.next_order_id);
         self.next_order_id += 1;
     }
@@ -55,6 +92,7 @@ impl Store {
             }
         }
     }
+
     pub fn list_products(&self) {
         println!("\n========== STORE PRODUCT LIST ==========\n");
         for product in &self.products {
@@ -68,10 +106,10 @@ impl Store {
         }
     }
     pub fn list_orders(&self) {
-        println!("========== STORE ORDER LIST ==========\n");
+        println!("\n========== STORE ORDER LIST ==========\n");
         for order in &self.orders {
             println!(
-                "Order ID: {:?}\nCustomer name: {}\nProduct ID: {:?}\nQty: {:?}\n",
+                "Order ID: {:?}\nCustomer name: {}\nProduct ID: {:?}\nQty: {:?}",
                 order.id,
                 order.customer_name,
                 order.product_id,
