@@ -18,40 +18,43 @@ impl Store {
     }
 
     // // My approach
-    // fn auto_cancel_invalid_orders(&mut self) {
-    //     let mut found_product_id = false;
-    //     for order in &mut self.orders {
-    //         for product in &self.products {
-    //             if order.product_id == product.id {
-    //                 found_product = true;
-    //                 if !product.is_in_stock(order.quantity) {
-    //                     order.update_status(OrderStatus::Cancelled0;
-    //                 }
-    //                 break;
-    //             }
-    //         }
-    //     }
-    //     if !found_product {
-    //         order.update_status(OrderStatus::Cancelled);
-    //     }
-    // }
-
-    // AI refactoring
     fn auto_cancel_invalid_orders(&mut self) {
+        let mut found_product_id = false;
         for order in &mut self.orders {
-            match self.products.iter().find(|p| p.id == order.product_id) {
-                Some(product) => {
+            for product in &mut self.products {
+                if order.product_id == product.id {
+                    found_product_id = true;
                     if !product.is_in_stock(order.quantity) {
                         order.update_status(OrderStatus::Cancelled);
+                    } else {
+                        let _ = product.reduce_stock(order.quantity);
                     }
+                    break;
                 }
-                None => {
-                    // Product ID is invalid
-                    order.update_status(OrderStatus::Cancelled);
-                }
+            }
+            if !found_product_id {
+                order.update_status(OrderStatus::Cancelled);
             }
         }
     }
+
+    // AI refactoring
+    // fn auto_cancel_invalid_orders(&mut self) {
+    //     for order in &mut self.orders {
+    //         // Find the index of the product
+    //         if let Some(index) = self.products.iter().position(|p| p.id == order.product_id) {
+    //             let product = &mut self.products[index];
+    //             if !product.is_in_stock(order.quantity) {
+    //                 order.update_status(OrderStatus::Cancelled);
+    //             } else {
+    //                 let _ = product.reduce_stock(order.quantity);
+    //             }
+    //         } else {
+    //             // Product ID is invalid
+    //             order.update_status(OrderStatus::Cancelled);
+    //         }
+    //     }
+    // }
 
     pub fn add_product(&mut self, name: &str, price: f64, stock: u32) {
         let new_product = Product {

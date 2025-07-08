@@ -37,4 +37,6 @@ fn main() {
 
     store.update_order_status(101, OrderStatus::Delivered);
     store.list_orders();
+
+    store.list_products();
 }
