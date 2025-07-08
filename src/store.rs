@@ -25,14 +25,14 @@ impl Store {
     //             if order.product_id == product.id {
     //                 found_product = true;
     //                 if !product.is_in_stock(order.quantity) {
-    //                     order.status = OrderStatus::Cancelled;
+    //                     order.update_status(OrderStatus::Cancelled0;
     //                 }
     //                 break;
     //             }
     //         }
     //     }
     //     if !found_product {
-    //         order.status = OrderStatus::Cancelled;
+    //         order.update_status(OrderStatus::Cancelled);
     //     }
     // }
 
@@ -42,12 +42,12 @@ impl Store {
             match self.products.iter().find(|p| p.id == order.product_id) {
                 Some(product) => {
                     if !product.is_in_stock(order.quantity) {
-                        order.status = OrderStatus::Cancelled;
+                        order.update_status(OrderStatus::Cancelled);
                     }
                 }
                 None => {
                     // Product ID is invalid
-                    order.status = OrderStatus::Cancelled;
+                    order.update_status(OrderStatus::Cancelled);
                 }
             }
         }
@@ -72,7 +72,7 @@ impl Store {
     pub fn place_order(&mut self, customer_name: &str, product_id: u32, quantity: u32) {
         let new_order = Order {
             id: self.next_order_id,
-            customer_name: customer_name.to_string(),
+            customer: Customer { name: customer_name.to_string() },
             product_id,
             quantity,
             status: OrderStatus::Pending,
@@ -86,7 +86,7 @@ impl Store {
     pub fn update_order_status(&mut self, order_id: u32, new_status: OrderStatus) {
         for order in &mut self.orders {
             if order.id == order_id {
-                order.status = new_status;
+                order.update_status(new_status);
                 println!("LOG: successfully updated Order {:?} status", order_id);
                 break;
             }
@@ -109,9 +109,9 @@ impl Store {
         println!("\n========== STORE ORDER LIST ==========\n");
         for order in &self.orders {
             println!(
-                "Order ID: {:?}\nCustomer name: {}\nProduct ID: {:?}\nQty: {:?}",
+                "Order ID: {:?}\nCustomer: {}\nProduct ID: {:?}\nQty: {:?}",
                 order.id,
-                order.customer_name,
+                order.customer.name,
                 order.product_id,
                 order.quantity
             );

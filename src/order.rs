@@ -1,3 +1,7 @@
+pub struct Customer {
+    pub name: String,
+}
+
 pub enum OrderStatus {
     Pending,
     Shipped,
@@ -7,7 +11,7 @@ pub enum OrderStatus {
 
 pub struct Order {
     pub id: u32,
-    pub customer_name: String,
+    pub customer: Customer,
     pub product_id: u32,
     pub quantity: u32,
     pub status: OrderStatus,
